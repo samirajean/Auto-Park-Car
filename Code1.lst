@@ -1,0 +1,273 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	D:\data\Desktop\HP HardDisk\Samirajean's\Micro Project\CODE\Code1.asm
+	Object File:	D:\data\Desktop\HP HardDisk\Samirajean's\Micro Project\CODE\Code1.hex
+	List File:	D:\data\Desktop\HP HardDisk\Samirajean's\Micro Project\CODE\Code1.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:		N      0000	ORG 00H
+    2:
+    3:	  0000	90 00 B0	MOV DPTR, #LUT
+    4:	  0003	75 90 00	MOV P1,#00000000B
+    5:
+    6:	  0006	C2 B0		CLR P3.0
+    7:	  0008	C2 B2		CLR P3.2
+    8:	  000A	C2 B4		CLR P3.4
+    9:				;----------------------------------------------------------------------------
+   10:	  000C	D2 B1		SETB P3.1 ; LEFT SENSOR
+   11:	  000E	75 89 20	MOV TMOD,#00100000B
+   12:	  0011			MAINL:
+   13:	  0011	75 8B CF	      MOV TL1,#207D
+   14:	  0014	75 8D CF	      MOV TH1,#207D
+   15:	  0017	74 00		      MOV A,#00000000B
+   16:	  0019	D2 B0		      SETB P3.0
+   17:	  001B	11 AB		      ACALL DELAY
+   18:	  001D	C2 B0		      CLR P3.0
+   19:	  001F	30 B1 FD	HERE: JNB P3.1, HERE
+   20:	  0022	D2 8E		BACK: SETB TR1
+   21:	  0024	30 8F FD	HERE1: JNB TF1, HERE1
+   22:	  0027	C2 8E		CLR TR1
+   23:	  0029	C2 8F		CLR TF1
+   24:	  002B	04		INC A
+   25:	  002C	B4 19 06	CJNE A, #19H, RIGHT
+   26:	  002F	D2 92		SETB P1.2; enable left wheel
+   27:	  0031	C2 90		CLR P1.0 ; stop right wheel
+   28:	  0033	80 29		SJMP CHECK
+   29:
+   30:
+   31:				;------------------------------------------------------------------------
+   32:
+   33:	  0035	D2 B1		RIGHT: SETB P3.1 ; RIGHT SENSOR
+   34:	  0037	75 89 20	MOV TMOD,#00100000B
+   35:	  003A	75 8B CF	MAINR:MOV TL1,#207D
+   36:	  003D	75 8D CF	      MOV TH1,#207D
+   37:	  0040	74 00		      MOV A,#00000000B
+   38:	  0042	D2 B0		      SETB P3.0
+   39:	  0044	11 AB		      ACALL DELAY
+   40:	  0046	C2 B0		      CLR P3.0
+   41:	  0048	30 B1 FD	HERER: JNB P3.1, HERER
+   42:	  004B	D2 8E		BACKR: SETB TR1
+   43:	  004D	30 8F FD	HERE1R: JNB TF1, HERE1R
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:	  0050	C2 8E		CLR TR1
+   45:	  0052	C2 8F		CLR TF1
+   46:	  0054	04		INC A
+   47:	  0055	B4 19 2F	CJNE A, #19H, CONT
+   48:	  0058	D2 90		SETB P1.0 ;enable right wheel
+   49:	  005A	C2 92		CLR P1.2  ; stop left wheel
+   50:	  005C	80 00		SJMP CHECK
+   51:
+   52:				;-----------------------------------------------------------------------
+   53:
+   54:				;TO STOP THE CAR BEFORE IT HITS THE OBJECT
+   55:	  005E	D2 B5		CHECK: SETB P3.5 ; Front
+   56:	  0060	75 89 20	MOV TMOD,#00100000B
+   57:	  0063	75 8B CF	MOV TL1,#207D
+   58:	  0066	75 8D CF	      MOV TH1,#207D
+   59:	  0069	74 00		      MOV A,#00000000B
+   60:	  006B	D2 B4		      SETB P3.4
+   61:	  006D	11 AB		      ACALL DELAY
+   62:	  006F	C2 B4		      CLR P3.4
+   63:	  0071	30 B5 FD	HEREF: JNB P3.5, HEREF
+   64:	  0074	D2 8E		BACKF: SETB TR1
+   65:	  0076	30 8F FD	HERE1F: JNB TF1, HERE1F
+   66:	  0079	C2 8E		CLR TR1
+   67:	  007B	C2 8F		CLR TF1
+   68:	  007D	04		INC A
+   69:	  007E	B4 05 06	CJNE A, #5H, CONT
+   70:	  0081	C2 90		CLR P1.0
+   71:	  0083	C2 92		CLR P1.2
+   72:
+   73:				;-------------------------------------------------------------------
+   74:
+   75:	  0085	80 12		SJMP COMP
+   76:	  0087	D2 90		CONT:	SETB P1.0
+   77:	  0089	D2 92			SETB P1.2
+   78:
+   79:	  008B	40 06			JC LOC1
+   80:	  008D	D2 90			SETB P1.0
+   81:	  008F	D2 92			SETB P1.2
+   82:	  0091	80 06			SJMP COMP
+   83:	  0093	C2 90		LOC1:	CLR P1.0
+   84:	  0095	C2 92		     	CLR P1.2
+   85:	  0097	80 00			SJMP COMP
+   86:
+   87:	  0099	20 B1 86	COMP:	JB P3.1, BACK
+   88:	  009C	FC			MOV R4,A
+   89:	  009D	01 11			JMP MAINL
+   90:
+   91:	  009F	20 B5 D2		JB P3.5, BACKF
+   92:	  00A2	FC			MOV R4, A
+   93:	  00A3	80 B9			SJMP CHECK
+   94:
+   95:	  00A5	20 B3 A3		JB P3.3, BACKR
+   96:	  00A8	FC			MOV R4, A
+   97:	  00A9	80 8F			SJMP MAINR
+   98:				;----------------------------------------------------------------------
+   99:
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+ Line  I  Addr  Code            Source
+
+  100:	  00AB	7E 02		DELAY: MOV R6,#2D
+  101:	  00AD	DE FE		LABEL1:	DJNZ R6, LABEL1
+  102:	  00AF	22			RET
+  103:
+  104:
+  105:				;----------------------------------------------------------------------
+  106:	  00B0	3F		LUT: DB 3FH
+  107:	  00B1	06		     DB 06H
+  108:	  00B2	5B		     DB 5BH
+  109:	  00B3	4F		     DB 4FH
+  110:	  00B4	66		     DB 66H
+  111:	  00B5	6D		     DB 6DH
+  112:	  00B6	7D		     DB 7DH
+  113:	  00B7	07		     DB 07H
+  114:	  00B8	7F		     DB 7FH
+  115:	  00B9	6F		     DB 6FH
+  116:
+  117:
+  118:				      END
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+B				  DATA	      F0
+BACK				  CODE	    0022	  20
+BACKF				  CODE	    0074	  64
+BACKR				  CODE	    004B	  42
+CHECK				  CODE	    005E	  55
+COMP				  CODE	    0099	  87
+CONT				  CODE	    0087	  76
+CY				  BIT	      D7
+DELAY				  CODE	    00AB	 100
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+F0				  BIT	      D5
+HERE				  CODE	    001F	  19
+HERE1				  CODE	    0024	  21
+HERE1F				  CODE	    0076	  65
+HERE1R				  CODE	    004D	  43
+HEREF				  CODE	    0071	  63
+HERER				  CODE	    0048	  41
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+LABEL1				  CODE	    00AD	 101
+LOC1				  CODE	    0093	  83
+LUT				  CODE	    00B0	 106
+MAINL				  CODE	    0011	  12
+MAINR				  CODE	    003A	  35
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PCON				  DATA	      87
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 5
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+PX1				  BIT	      BA
+RB8				  BIT	      9A
+RD				  BIT	      B7
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+RIGHT				  CODE	    0035	  33
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCON				  DATA	      98
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SP				  DATA	      81
+T0				  BIT	      B4
+T1				  BIT	      B5
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+TI				  BIT	      99
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TXD				  BIT	      B1
+WR				  BIT	      B6
